@@ -8,7 +8,7 @@ CFLAGS=-Wall -Werror -MD -MF$(patsubst %.o,%.d,$@)
 .PHONY: default
 default: $(OUTDIR)/cflakes
 
-$(OUTDIR)/cflakes: $(addprefix $(BUILDDIR)/,reiter.o util.o)
+$(OUTDIR)/cflakes: $(addprefix $(BUILDDIR)/,cell6.o reiter.o util.o)
 
 
 $(BUILDDIR)/%.o: $(SRCDIR)/%.c
