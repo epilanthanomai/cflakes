@@ -42,7 +42,8 @@ int c6_state_point_valid(struct c6_state *state, int row, int col) {
 }
 
 void c6_dump_state(struct c6_state *state) {
-  C6_STATE_EACH_CELL(state, r, c, {
+  C6_GEO_EACH_CELL(state->geo, r, c,
+    {}, {
       if (c6_state_point_valid(state, r, c)) {
         int idx = c6_state_index(state, r, c);
         fprintf(stderr, "%6.3f ", state->cells[idx]);

@@ -29,12 +29,13 @@ void c6_dump_state(struct c6_state*);
 
 // public interface: inlines and macros
 
-#define C6_STATE_EACH_CELL(state, row_v, col_v, cell_block, row_block)  \
+#define C6_GEO_EACH_CELL(geo, row_v, col_v, before_row, cell, after_row)  \
 {  \
-  for (int row_v=-(state)->geo->center; row_v <= (state)->geo->center; row_v++) {  \
-    for (int col_v=-(state)->geo->center; col_v <= (state)->geo->center; col_v++) {  \
-      cell_block;  \
+  for (int row_v=-(geo)->center; row_v <= (geo)->center; row_v++) {  \
+    { before_row; }  \
+    for (int col_v=-(geo)->center; col_v <= (geo)->center; col_v++) {  \
+      cell;  \
     }  \
-    { row_block; }  \
+    { after_row; }  \
   }  \
 }
