@@ -3,6 +3,15 @@
 #include "cell6.h"
 #include "util.h"
 
+
+// row, col:
+//
+//         -1, 0
+//   0,-1          -1, +1
+//          0, 0
+//  +1,-1           0, +1
+//         +1, 0
+
 static struct {
   int row_d;
   int col_d;
