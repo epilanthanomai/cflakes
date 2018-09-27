@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "cell6.h"
+#include "path.h"
 #include "util.h"
 
 #define CONST_GAIN 0.001
@@ -37,7 +38,7 @@ static void rsf_ma_calculate_receptive(
   C6_GEO_EACH_CELL(geo, i, {
       int receptive = (src->cells[i] >= 1);
       for (int n=0; !receptive && n < geo->cells[i].num_neighbors; n++) {
-        int ni = geo->cells[i].neighbor_indexes[n];
+        int ni = geo->cells[i].neighbors[n].index;
         if (src->cells[ni] >= 1.0) {
           receptive = 1;
         }
@@ -56,7 +57,7 @@ static void rsf_ma_calculate_diffusion(
       float neighbor_sum = 0;
       int num_neighbors = geo->cells[i].num_neighbors;
       for (int n=0; n < num_neighbors; n++) {
-        int ni = geo->cells[i].neighbor_indexes[n];
+        int ni = geo->cells[i].neighbors[n].index;
         if (receptive->cells[ni] == 0.0) {
           neighbor_sum += src->cells[ni];
         }
@@ -139,4 +140,28 @@ void rsf_state_dump_ice(struct c6_state *s) {
     }, {
       fputc('\n', stderr);
     });
+}
+
+struct pa_path_set *rsf_make_traced_path_set(struct c6_state *s) {
+  struct pa_segment_bag *sb = pa_make_segment_bag();
+
+  C6_GEO_EACH_ROW_CELL(s->geo, r, c, i,
+    {}, {
+      int layout_col = c + s->geo->rows[r].col_offset;
+      int node_is_ice = s->cells[i] >= 1.0;
+      for (int n=0; n < s->geo->cells[i].num_neighbors; n++) {
+        int neighbor_num = s->geo->cells[i].neighbors[n].neighbor_num;
+        if (neighbor_num < MAX_NEIGHBORS / 2) {
+          int neighbor_index = s->geo->cells[i].neighbors[n].index;
+          int neighbor_is_ice = s->cells[neighbor_index] >= 1.0;
+          if (node_is_ice != neighbor_is_ice) {
+            pa_bag_add_segment(sb, r, layout_col, neighbor_num);
+          }
+        }
+      }
+    }, {});
+
+  struct pa_path_set *ps = pa_make_path_list_from_bag(sb);
+  pa_free_segment_bag(sb);
+  return ps;
 }

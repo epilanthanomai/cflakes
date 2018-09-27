@@ -10,9 +10,14 @@ struct c6_row_geometry {
   int end_index;
 };
 
+struct c6_cell_neighbor {
+  int index;
+  int neighbor_num;
+};
+
 struct c6_cell_geometry {
   int num_neighbors;
-  int neighbor_indexes[MAX_NEIGHBORS];
+  struct c6_cell_neighbor neighbors[MAX_NEIGHBORS];
 };
 
 struct c6_state_geometry {

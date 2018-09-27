@@ -56,7 +56,8 @@ struct c6_state_geometry *c6_make_geometry(int max_dim) {
           if ((nc_i >= geo->rows[nc_r].start_index) &&
               (nc_i < geo->rows[nc_r].end_index)) {
             int n = geo->cells[i].num_neighbors++;
-            geo->cells[i].neighbor_indexes[n] = nc_i;
+            geo->cells[i].neighbors[n].index = nc_i;
+            geo->cells[i].neighbors[n].neighbor_num = nc;
           }
         }
       }
