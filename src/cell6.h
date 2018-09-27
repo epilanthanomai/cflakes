@@ -2,15 +2,26 @@
 
 // private interface needed for macros
 
+#define MAX_NEIGHBORS 6
+
 struct c6_row_geometry {
+  int col_offset;
   int start_index;
   int end_index;
+};
+
+struct c6_cell_geometry {
+  int num_neighbors;
+  int neighbor_indexes[MAX_NEIGHBORS];
 };
 
 struct c6_state_geometry {
   int center;
   int max_row;
   struct c6_row_geometry *rows;
+  struct c6_cell_geometry *cells;
+  int num_edges;
+  int *edges;
 };
 
 struct c6_state {
@@ -27,6 +38,8 @@ int c6_geo_index(struct c6_state_geometry *, int row, int col);
 
 struct c6_state *c6_make_state(struct c6_state_geometry*);
 void c6_free_state(struct c6_state*);
+
+void c6_dump_neighbor_counts(struct c6_state_geometry*);
 void c6_dump_state(struct c6_state*);
 
 // public interface: inlines and macros
