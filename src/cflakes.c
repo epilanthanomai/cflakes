@@ -16,7 +16,7 @@ int main(int argc, char **argv) {
   state = rsf_state_advance_to_edge(state, MAX_ITERS);
 
   struct pa_path_set *ps = rsf_make_traced_path_set(state);
-  svg_print_paths(ps);
+  svg_print_paths(ps, MAX_DIM);
 
   pa_free_path_set(ps);
   c6_free_state(state);
