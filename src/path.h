@@ -14,6 +14,6 @@ void pa_free_path_set(struct pa_path_set*);
 
 struct pa_path *pa_new_path(struct pa_path_set*);
 void pa_each_path(struct pa_path_set*, void (*)(struct pa_path*, void*), void*);
-void pa_each_segment(struct pa_path*, void (*)(int r, int c, int n, void*), void*);
+void pa_each_segment(struct pa_path*, void (*)(int r, int c, int n, int d, void*), void*);
 
 struct pa_path_set *pa_make_path_list_from_bag(struct pa_segment_bag*);

@@ -15,7 +15,7 @@ CFLAGS=$(CFLAGS.errors) $(CFLAGS.deps) $(CFLAGS.includes)
 .PHONY: default
 default: $(OUTDIR)/cflakes
 
-$(OUTDIR)/cflakes: $(addprefix $(BUILDDIR)/,cell6.o path.o reiter.o util.o)
+$(OUTDIR)/cflakes: $(addprefix $(BUILDDIR)/,cell6.o path.o reiter.o svg.o util.o)
 
 
 $(BUILDDIR)/%.o: $(SRCDIR)/%.c

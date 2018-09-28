@@ -13,6 +13,7 @@ struct pa_segment {
 
 struct pa_segment_node {
   struct pa_segment segment;
+  int direction;
   UT_hash_handle hh;
   struct pa_segment_node *next;
 };
@@ -103,15 +104,16 @@ void pa_each_path(struct pa_path_set *ps, void (*f)(struct pa_path*, void*), voi
   }
 }
 
-void pa_each_segment(struct pa_path *pa, void (*f)(int, int, int, void*), void *data) {
+void pa_each_segment(struct pa_path *pa, void (*f)(int, int, int, int, void*), void *data) {
   struct pa_segment_node *pas;
   for (pas=pa->head; pas != NULL; pas = pas->next) {
-    f(pas->segment.row, pas->segment.col, pas->segment.neighbor, data);
+    f(pas->segment.row, pas->segment.col, pas->segment.neighbor, pas->direction, data);
   }
 }
 
-static void pa_path_append_from_bag(struct pa_path *pa, struct pa_segment_bag *sb, struct pa_segment_node *sn) {
+static void pa_path_append_from_bag(struct pa_path *pa, struct pa_segment_bag *sb, struct pa_segment_node *sn, int direction) {
   HASH_DEL(sb->segments, sn);
+  sn->direction = direction;
   sn->next = NULL;
   if (pa->tail) {
     pa->tail->next = sn;
@@ -196,7 +198,7 @@ struct pa_path_set *pa_make_path_list_from_bag(struct pa_segment_bag *sb) {
     sn_start = sn = sb->segments;
     direction = 0;
     do {
-      pa_path_append_from_bag(pa, sb, sn);
+      pa_path_append_from_bag(pa, sb, sn, direction);
       pa_advance_segment(&sn, &direction, sb);
     } while (sn != NULL);
   }
