@@ -12,4 +12,8 @@ void *must_malloc(size_t sz) {
   if (result == NULL)
     error("malloc");
   return result;
-} 
+}
+
+float rand_float(float base, float var) {
+  return base + (float) rand() / ((float) RAND_MAX / var);
+}

@@ -5,12 +5,15 @@
 #include "path.h"
 #include "reiter.h"
 #include "svg.h"
+#include "util.h"
 
 #define MAX_DIM 200
 #define MAX_ITERS 10000
 
 #define BG_BASE 0.3
 #define BG_VAR 0.15
+#define BG_JITTER_BASE 0.0
+#define BG_JITTER_VAR 0.1
 #define GAIN_BASE 0.0
 #define GAIN_VAR 0.005
 #define NDW_BASE 0.5
@@ -18,16 +21,12 @@
 #define DIM_BASE 2.0
 #define DIM_VAR 1.0
 
-
 char SVG_COMMENT[] =
-"background:  %f\n"
-"gain:        %f\n"
-"neighb. wt.: %f\n"
-"dim:         %s\n";
-
-static float rand_float(float base, float var) {
-  return base + (float) rand() / ((float) RAND_MAX / var);
-}
+"background: %f\n"
+"bg jitter:  %f\n"
+"gain:       %f\n"
+"neighb wt:  %f\n"
+"dim:        %s\n";
 
 int main(int argc, char **argv) {
   srand(time(NULL));
@@ -36,6 +35,7 @@ int main(int argc, char **argv) {
   struct c6_state *state = c6_make_state(geo);
 
   float bg_level = rand_float(BG_BASE, BG_VAR);
+  float bg_jitter = rand_float(BG_JITTER_BASE, BG_JITTER_VAR);
   float const_gain = rand_float(GAIN_BASE, GAIN_VAR);
   float ndiff_weight = rand_float(NDW_BASE, NDW_VAR);
   float svg_dim = rand_float(DIM_BASE, DIM_VAR);
@@ -44,9 +44,10 @@ int main(int argc, char **argv) {
   snprintf(svg_dim_s, sizeof(svg_dim_s)-1, "%8.6fin", svg_dim);
 
   char svg_comment[1024] = {};
-  snprintf(svg_comment, sizeof(svg_comment)-1, SVG_COMMENT, bg_level, const_gain, ndiff_weight, svg_dim_s);
+  snprintf(svg_comment, sizeof(svg_comment)-1, SVG_COMMENT,
+      bg_level, bg_jitter, const_gain, ndiff_weight, svg_dim_s);
 
-  rsf_init_state(state, bg_level);
+  rsf_init_state(state, bg_level, bg_jitter);
   state = rsf_state_advance_to_edge(
       state, MAX_ITERS, const_gain, ndiff_weight);
 

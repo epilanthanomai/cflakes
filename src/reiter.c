@@ -103,9 +103,9 @@ struct c6_state *rsf_ma_advance(struct rsf_machine *m) {
   return m->current;
 }
 
-void rsf_init_state(struct c6_state *state, float bg_level) {
+void rsf_init_state(struct c6_state *state, float bg_level, float bg_jitter) {
   C6_GEO_EACH_CELL(state->geo, i, {
-      state->cells[i] = bg_level;
+      state->cells[i] = bg_level + rand_float(-bg_jitter / 2, bg_jitter);
     });
   state->cells[c6_geo_index(state->geo, 0, 0)] = 1.0;
 }

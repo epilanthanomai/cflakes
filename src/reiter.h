@@ -11,7 +11,7 @@ void rsf_ma_calculate_next(struct rsf_machine*);
 int rsf_ma_next_any_edges_ice(struct rsf_machine*);
 struct c6_state *rsf_ma_advance(struct rsf_machine*);
 
-void rsf_init_state(struct c6_state*, float bg_level);
+void rsf_init_state(struct c6_state*, float bg_level, float bg_jitter);
 struct c6_state *rsf_state_advance_once(
     struct c6_state*, float const_gain, float ndiff_weight);
 struct c6_state *rsf_state_advance_to_edge(
