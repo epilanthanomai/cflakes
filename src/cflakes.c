@@ -1,5 +1,6 @@
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 #include "cell6.h"
 #include "path.h"
 #include "reiter.h"
@@ -18,10 +19,12 @@
 #define DIM_VAR 1.0
 
 static float rand_float(float base, float var) {
-  return base + (float) rand() * var / (float) RAND_MAX;
+  return base + (float) rand() / ((float) RAND_MAX / var);
 }
 
 int main(int argc, char **argv) {
+  srand(time(NULL));
+
   struct c6_state_geometry *geo = c6_make_geometry(MAX_DIM);
   struct c6_state *state = c6_make_state(geo);
 
