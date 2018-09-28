@@ -10,13 +10,20 @@
 #define MAX_ITERS 10000
 
 #define BG_BASE 0.3
-#define BG_VAR 0.5
+#define BG_VAR 0.15
 #define GAIN_BASE 0.0
 #define GAIN_VAR 0.005
 #define NDW_BASE 0.5
-#define NDW_VAR 2.5
+#define NDW_VAR 1.5
 #define DIM_BASE 2.0
 #define DIM_VAR 1.0
+
+
+char SVG_COMMENT[] =
+"background:  %f\n"
+"gain:        %f\n"
+"neighb. wt.: %f\n"
+"dim:         %s\n";
 
 static float rand_float(float base, float var) {
   return base + (float) rand() / ((float) RAND_MAX / var);
@@ -36,13 +43,15 @@ int main(int argc, char **argv) {
   char svg_dim_s[12] = {};;
   snprintf(svg_dim_s, sizeof(svg_dim_s)-1, "%8.6fin", svg_dim);
 
+  char svg_comment[1024] = {};
+  snprintf(svg_comment, sizeof(svg_comment)-1, SVG_COMMENT, bg_level, const_gain, ndiff_weight, svg_dim_s);
 
   rsf_init_state(state, bg_level);
   state = rsf_state_advance_to_edge(
       state, MAX_ITERS, const_gain, ndiff_weight);
 
   struct pa_path_set *ps = rsf_make_traced_path_set(state);
-  svg_print_paths(ps, MAX_DIM, svg_dim_s);
+  svg_print_paths(ps, MAX_DIM, svg_dim_s, svg_comment);
 
   pa_free_path_set(ps);
   c6_free_state(state);
