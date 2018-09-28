@@ -4,8 +4,9 @@
 
 char SVG_HEADER[] =
 "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
-"<svg width=\"8in\" height=\"8in\" viewBox=\"%d,%d,%d,%d\"\n"
-"     xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\">\n";
+"<svg width=\"%s\" height=\"%s\" viewBox=\"%d,%d,%d,%d\"\n"
+"     xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\">\n"
+"\n";
 
 char SVG_FOOTER[] = "</svg>";
 
@@ -77,11 +78,11 @@ void svg_print_path(struct pa_path *pa, void *data) {
   puts(PATH_FOOTER);
 }
 
-void svg_print_paths(struct pa_path_set *ps, int max_dim) {
+void svg_print_paths(struct pa_path_set *ps, int max_dim, char *svg_dim) {
   int path_counter = 0;
   int xmin=0, xmax=2*max_dim, ymin=max_dim/2, ymax=5*max_dim/2;
 
-  printf(SVG_HEADER, xmin, ymin, xmax, ymax);
+  printf(SVG_HEADER, svg_dim, svg_dim, xmin, ymin, xmax, ymax);
   pa_each_path(ps, svg_print_path, &path_counter);
   puts(SVG_FOOTER);
 }

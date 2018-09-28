@@ -4,8 +4,6 @@
 #include "path.h"
 #include "util.h"
 
-#define CONST_GAIN 0.001
-
 struct rsf_machine {
   struct c6_state_geometry *geo;
   struct c6_state *current;
@@ -34,7 +32,8 @@ void rsf_free_machine(struct rsf_machine *m) {
 static void rsf_ma_calculate_receptive(
     struct c6_state *dest,
     struct c6_state *src,
-    struct c6_state_geometry *geo) {
+    struct c6_state_geometry *geo,
+    float const_gain) {
   C6_GEO_EACH_CELL(geo, i, {
       int receptive = (src->cells[i] >= 1);
       for (int n=0; !receptive && n < geo->cells[i].num_neighbors; n++) {
@@ -43,7 +42,7 @@ static void rsf_ma_calculate_receptive(
           receptive = 1;
         }
       }
-      dest->cells[i] = receptive ? (src->cells[i] + CONST_GAIN) : 0.0;
+      dest->cells[i] = receptive ? (src->cells[i] + const_gain) : 0.0;
     });
 }
 
@@ -51,7 +50,8 @@ static void rsf_ma_calculate_diffusion(
     struct c6_state *dest,
     struct c6_state *src,
     struct c6_state *receptive,
-    struct c6_state_geometry *geo) {
+    struct c6_state_geometry *geo,
+    float ndiff_weight) {
   C6_GEO_EACH_CELL(geo, i, {
       float cell_receptive = (receptive->cells[i] > 0.0) ? 0.0 : src->cells[i];
       float neighbor_sum = 0;
@@ -63,7 +63,7 @@ static void rsf_ma_calculate_diffusion(
         }
       }
       float neighbor_avg = neighbor_sum / num_neighbors;
-      dest->cells[i] = (cell_receptive + neighbor_avg) / 2.0;
+      dest->cells[i] = (cell_receptive + ndiff_weight * neighbor_avg) / (ndiff_weight + 1.0);
     });
 }
 
@@ -77,9 +77,11 @@ static void rsf_ma_sum_components(
     });
 }
 
-void rsf_ma_calculate_next(struct rsf_machine *m) {
-  rsf_ma_calculate_receptive(m->receptive, m->current, m->geo);
-  rsf_ma_calculate_diffusion(m->diffusion, m->current, m->receptive, m->geo);
+void rsf_ma_calculate_next(
+    struct rsf_machine *m, float const_gain, float ndiff_weight) {
+  rsf_ma_calculate_receptive(m->receptive, m->current, m->geo, const_gain);
+  rsf_ma_calculate_diffusion(
+      m->diffusion, m->current, m->receptive, m->geo, ndiff_weight);
   rsf_ma_sum_components(m->next, m->receptive, m->diffusion, m->geo);
 }
 
@@ -108,19 +110,21 @@ void rsf_init_state(struct c6_state *state, float bg_level) {
   state->cells[c6_geo_index(state->geo, 0, 0)] = 1.0;
 }
 
-struct c6_state *rsf_state_advance_once(struct c6_state *state) {
+struct c6_state *rsf_state_advance_once(
+    struct c6_state *state, float const_gain, float ndiff_weight) {
   struct rsf_machine *m = rsf_make_machine(state);
-  rsf_ma_calculate_next(m);
+  rsf_ma_calculate_next(m, const_gain, ndiff_weight);
   struct c6_state *result = rsf_ma_advance(m);
   rsf_free_machine(m);
   return result;
 }
 
-struct c6_state *rsf_state_advance_to_edge(struct c6_state *state, int max_iters) {
+struct c6_state *rsf_state_advance_to_edge(
+    struct c6_state *state, int max_iters, float const_gain, float ndiff_weight) {
   struct rsf_machine *m = rsf_make_machine(state);
   int i;
   for (i = 0; i < max_iters; i++) {
-    rsf_ma_calculate_next(m);
+    rsf_ma_calculate_next(m, const_gain, ndiff_weight);
     if (rsf_ma_next_any_edges_ice(m)) {
       break;
     }
