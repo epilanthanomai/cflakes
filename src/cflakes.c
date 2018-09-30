@@ -11,11 +11,11 @@
 #define MAX_ITERS 10000
 
 #define BG_BASE 0.3
-#define BG_VAR 0.15
+#define BG_VAR 0.2
 #define BG_JITTER_BASE 0.0
 #define BG_JITTER_VAR 0.1
-#define GAIN_BASE 0.0
-#define GAIN_VAR 0.005
+#define GAIN_BASE 0.0001
+#define GAIN_VAR 0.003
 #define NDW_BASE 0.5
 #define NDW_VAR 1.5
 #define DIM_BASE 2.0
