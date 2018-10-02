@@ -28,13 +28,12 @@ static char *path_colors[] = {
   "blue"
 };
 
-static const float BORDER_MULTIPLIER = 1.05;
+#define BORDER_MULTIPLIER 1.05
+#define HALF_SIDE 0.28867513459481287  // sqrt(3)/6
 
-static const float HALF_SIDE = 0.28867513459481287;  // sqrt(3)/6
-
-static const float ROW_HEIGHT = 1.0;
-static const float ROW_OFFSET = 0.5;
-static const float COL_WIDTH = 3.0 * HALF_SIDE;
+#define ROW_HEIGHT 1.0
+#define ROW_OFFSET 0.5
+#define COL_WIDTH (3.0 * HALF_SIDE)
 
 static struct segment_points {
   float start_x;
