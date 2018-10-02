@@ -5,10 +5,11 @@ VENDORDIR=vendor
 
 UTHASH_VERSION=2.0.2
 
+CFLAGS.base=-std=c99
 CFLAGS.errors=-Wall -Werror
 CFLAGS.deps=-MD -MF$(patsubst %.o,%.d,$@)
 CFLAGS.includes=-I$(VENDORDIR)/uthash-$(UTHASH_VERSION)/src
-CFLAGS=$(CFLAGS.errors) $(CFLAGS.deps) $(CFLAGS.includes)
+CFLAGS=$(CFLAGS.base) $(CFLAGS.errors) $(CFLAGS.deps) $(CFLAGS.includes)
 
 # main targets
 
