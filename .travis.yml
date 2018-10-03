@@ -5,9 +5,10 @@ services:
 script:
   - docker build -t epilanthanomai/cflakes .
 deploy:
+  provider: script
   script:
-    - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-    - docker push epilanthanomai/cflakes
+    - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD";
+      docker push epilanthanomai/cflakes
   on:
     branch:
-      master
+      - develop
