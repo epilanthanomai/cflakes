@@ -189,13 +189,13 @@ static void pa_advance_segment(struct pa_segment_node **sn, int *direction, stru
 
 struct pa_path_set *pa_make_path_list_from_bag(struct pa_segment_bag *sb) {
   struct pa_path_set *ps = pa_make_path_set();
-  struct pa_segment_node *sn, *sn_start;
+  struct pa_segment_node *sn;
   struct pa_path *pa;
   int direction;
 
   while (sb->segments != NULL) {
     pa = pa_new_path(ps);
-    sn_start = sn = sb->segments;
+    sn = sb->segments;
     direction = 0;
     do {
       pa_path_append_from_bag(pa, sb, sn, direction);

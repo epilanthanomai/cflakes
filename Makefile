@@ -1,27 +1,28 @@
 SRCDIR=src
 BUILDDIR=build
-OUTDIR=out
+BINDIR=bin
 VENDORDIR=vendor
 
 UTHASH_VERSION=2.0.2
 
+CFLAGS.base=-std=c99
 CFLAGS.errors=-Wall -Werror
 CFLAGS.deps=-MD -MF$(patsubst %.o,%.d,$@)
 CFLAGS.includes=-I$(VENDORDIR)/uthash-$(UTHASH_VERSION)/src
-CFLAGS=$(CFLAGS.errors) $(CFLAGS.deps) $(CFLAGS.includes)
+CFLAGS=$(CFLAGS.base) $(CFLAGS.errors) $(CFLAGS.deps) $(CFLAGS.includes)
 
 # main targets
 
 .PHONY: default
-default: $(OUTDIR)/cflakes
+default: $(BINDIR)/cflakes
 
-$(OUTDIR)/cflakes: $(addprefix $(BUILDDIR)/,cell6.o path.o reiter.o svg.o util.o)
+$(BINDIR)/cflakes: $(addprefix $(BUILDDIR)/,cell6.o path.o reiter.o svg.o util.o)
 
 
 $(BUILDDIR)/%.o: $(SRCDIR)/%.c
 	$(COMPILE.c) $(OUTPUT_OPTION) $<
 
-$(OUTDIR)/%: $(BUILDDIR)/%.o
+$(BINDIR)/%: $(BUILDDIR)/%.o
 	$(LINK.c) $^ $(LOADLIBES) $(LDLIBS) -o $@
 
 .PRECIOUS: %.o
@@ -40,10 +41,10 @@ $(VENDORDIR)/uthash-$(UTHASH_VERSION).tar.gz:
 
 .PHONY: clean
 clean:
-	rm -rf $(BUILDDIR) $(OUTDIR) $(VENDORDIR)
+	rm -rf $(BUILDDIR) $(BINDIR) $(VENDORDIR)
 
 ifneq ($(MAKECMDGOALS),clean)
-$(shell mkdir -p $(BUILDDIR) $(OUTDIR) $(VENDORDIR))
+$(shell mkdir -p $(BUILDDIR) $(BINDIR) $(VENDORDIR))
 endif
 
 -include $(BUILDDIR)/*.d
