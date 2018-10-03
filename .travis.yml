@@ -1,2 +1,13 @@
 language: c
-script: make
+sudo: required
+services:
+  - docker
+script:
+  - docker build -t epilanthanomai/cflakes .
+deploy:
+  script:
+    - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+    - docker push epilanthanomai/cflakes
+  on:
+    branch:
+      master
