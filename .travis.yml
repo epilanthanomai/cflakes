@@ -3,7 +3,7 @@ sudo: required
 services:
   - docker
 script:
-  - docker build -t epilanthanomai/cflakes .
+  - make docker-cflakes-build docker-cflakes
 deploy:
   provider: script
   script:
