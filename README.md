@@ -16,4 +16,4 @@ Please be patient. With default options execution takes around 30s on my
 2015 workstation.
 
 Command line options are poorly documented, but you can see them
-in the program [usage string](https://github.com/epilanthanomai/cflakes/blob/develop/src/cflakes.c#L11).
+in the program [usage string](https://github.com/epilanthanomai/cflakes/blob/develop/src/cflakes.c#L30).
