@@ -22,9 +22,10 @@
 
 static char SVG_HEADER[] =
 "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
-"<svg width=\"%s\" height=\"%s\" viewBox=\"%f,%f,%f,%f\"\n"
-"     xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\"\n"
-"     stroke-width=\"0.1\" fill=\"none\">\n"
+"<svg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\"\n"
+"     width=\"%s\" height=\"%s\"\n"
+"     viewBox=\"%f,%f,%f,%f\"\n"
+"     stroke-width=\"0.1\" stroke=\"black\" fill=\"none\">\n"
 "<!--\n"
 "%s"
 "-->\n"
@@ -33,20 +34,15 @@ static char SVG_HEADER[] =
 static char SVG_FOOTER[] = "</svg>";
 
 static char PATH_HEADER[] =
-"<path stroke=\"%s\"\n"
-"      d=\"\n";
+"<path d=\"";
 
 static char PATH_FOOTER[] = "\"/>\n";
 
 static char BORDER_CIRCLE[] =
-"<circle cx=\"%f\" cy=\"%f\" r=\"%f\" stroke=\"black\"/>\n\n";
-
-static char *path_colors[] = {
-  "purple",
-  "blue"
-};
+"<circle cx=\"0\" cy=\"0\" r=\"%f\"/>\n\n";
 
 #define BORDER_MULTIPLIER 1.05
+#define VIEW_MULTIPLIER 1.1
 #define HALF_SIDE 0.28867513459481287  // sqrt(3)/6
 
 #define ROW_HEIGHT 1.0
@@ -100,33 +96,24 @@ static void svg_print_segment(int row, int col, int neighbor, int dir, void *dat
 }
 
 static void svg_print_path(struct pa_path *pa, void *data) {
-  int *path_counter = (int*)data;
-  char *path_color = path_colors[(*path_counter)++ > 0];
   int segment_counter = 0;
 
-  printf(PATH_HEADER, path_color);
+  puts(PATH_HEADER);
   pa_each_segment(pa, svg_print_segment, &segment_counter);
   puts(PATH_FOOTER);
 }
 
 static void pa_print_circle(int max_dim) {
-  float x, y, r;
-  svg_get_hex_center_coords(&x, &y, max_dim, max_dim);
+  float r;
   r = (float) max_dim * BORDER_MULTIPLIER;
-  printf(BORDER_CIRCLE, x, y, r);
+  printf(BORDER_CIRCLE, r);
 }
 
-static const float YMIN_BORDER_MULT = 9.0/20.0;
-static const float YMAX_BORDER_MULT = 55.0/20.0;
-
 void svg_print_paths(struct pa_path_set *ps, int max_dim, char *svg_dim, char *comment) {
-  int path_counter = 0;
-  float xmin=0, xmax=2*max_dim,
-        ymin=(float)max_dim*YMIN_BORDER_MULT,
-        ymax=(float)max_dim* YMAX_BORDER_MULT;
+  float view_dim = (float) max_dim * VIEW_MULTIPLIER;
 
-  printf(SVG_HEADER, svg_dim, svg_dim, xmin, ymin, xmax, ymax, comment);
-  pa_each_path(ps, svg_print_path, &path_counter);
+  printf(SVG_HEADER, svg_dim, svg_dim, -view_dim, -view_dim, 2.0 * view_dim, 2.0 * view_dim, comment);
+  pa_each_path(ps, svg_print_path, 0);
   pa_print_circle(max_dim);
   puts(SVG_FOOTER);
 }
