@@ -39,7 +39,7 @@ static char PATH_HEADER[] =
 static char PATH_FOOTER[] = "\"/>\n";
 
 static char BORDER_CIRCLE[] =
-"<circle cx=\"%f\" cy=\"%f\" r=\"%f\" stroke=\"black\"/>\n\n";
+"<circle cx=\"0\" cy=\"0\" r=\"%f\" stroke=\"black\"/>\n\n";
 
 static char *path_colors[] = {
   "purple",
@@ -47,6 +47,7 @@ static char *path_colors[] = {
 };
 
 #define BORDER_MULTIPLIER 1.05
+#define VIEW_MULTIPLIER 1.1
 #define HALF_SIDE 0.28867513459481287  // sqrt(3)/6
 
 #define ROW_HEIGHT 1.0
@@ -110,22 +111,16 @@ static void svg_print_path(struct pa_path *pa, void *data) {
 }
 
 static void pa_print_circle(int max_dim) {
-  float x, y, r;
-  svg_get_hex_center_coords(&x, &y, max_dim, max_dim);
+  float r;
   r = (float) max_dim * BORDER_MULTIPLIER;
-  printf(BORDER_CIRCLE, x, y, r);
+  printf(BORDER_CIRCLE, r);
 }
-
-static const float YMIN_BORDER_MULT = 9.0/20.0;
-static const float YMAX_BORDER_MULT = 55.0/20.0;
 
 void svg_print_paths(struct pa_path_set *ps, int max_dim, char *svg_dim, char *comment) {
   int path_counter = 0;
-  float xmin=0, xmax=2*max_dim,
-        ymin=(float)max_dim*YMIN_BORDER_MULT,
-        ymax=(float)max_dim* YMAX_BORDER_MULT;
+  float view_dim = (float) max_dim * VIEW_MULTIPLIER;
 
-  printf(SVG_HEADER, svg_dim, svg_dim, xmin, ymin, xmax, ymax, comment);
+  printf(SVG_HEADER, svg_dim, svg_dim, -view_dim, -view_dim, 2.0 * view_dim, 2.0 * view_dim, comment);
   pa_each_path(ps, svg_print_path, &path_counter);
   pa_print_circle(max_dim);
   puts(SVG_FOOTER);

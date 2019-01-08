@@ -164,7 +164,7 @@ void rsf_state_dump_ice(struct c6_state *s) {
     });
 }
 
-struct pa_path_set *rsf_make_traced_path_set(struct c6_state *s) {
+struct pa_path_set *rsf_make_traced_path_set(struct c6_state *s, int max_dim) {
   struct pa_segment_bag *sb = pa_make_segment_bag();
 
   C6_GEO_EACH_ROW_CELL(s->geo, r, c, i,
@@ -177,7 +177,7 @@ struct pa_path_set *rsf_make_traced_path_set(struct c6_state *s) {
           int neighbor_index = s->geo->cells[i].neighbors[n].index;
           int neighbor_is_ice = s->cells[neighbor_index] >= 1.0;
           if (node_is_ice != neighbor_is_ice) {
-            pa_bag_add_segment(sb, r, layout_col, neighbor_num);
+            pa_bag_add_segment(sb, r - max_dim, layout_col - max_dim, neighbor_num);
           }
         }
       }

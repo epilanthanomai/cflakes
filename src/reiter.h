@@ -36,4 +36,4 @@ struct c6_state *rsf_state_advance_to_edge(
     struct c6_state*, int max_iters, float const_gain, float ndiff_weight);
 void rsf_state_dump_ice(struct c6_state*);
 
-struct pa_path_set *rsf_make_traced_path_set(struct c6_state*);
+struct pa_path_set *rsf_make_traced_path_set(struct c6_state*, int max_dim);
