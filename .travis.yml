@@ -3,12 +3,14 @@ sudo: required
 services:
   - docker
 script:
-  - docker build -t epilanthanomai/cflakes .
+  - docker build -t cflakes .
 deploy:
   provider: script
   script:
     - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD";
-      docker push epilanthanomai/cflakes
+      docker tag cflakes epilanthanomai/cflakes:latest;
+      docker push epilanthanomai/cflakes:latest;
+      docker tag cflakes "epilanthanomai/cflakes:${JENKINS_TAG#v}";
+      docker push "epilanthanomai/cflakes:${JENKINS_TAG#v}"
   on:
-    branch:
-      - develop
+    tags: true
