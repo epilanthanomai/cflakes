@@ -10,7 +10,7 @@ deploy:
     - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD";
       docker tag cflakes epilanthanomai/cflakes:latest;
       docker push epilanthanomai/cflakes:latest;
-      docker tag cflakes "epilanthanomai/cflakes:${JENKINS_TAG#v}";
-      docker push "epilanthanomai/cflakes:${JENKINS_TAG#v}"
+      docker tag cflakes "epilanthanomai/cflakes:${TRAVIS_TAG#v}";
+      docker push "epilanthanomai/cflakes:${TRAVIS_TAG#v}"
   on:
     tags: true
