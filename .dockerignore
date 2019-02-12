@@ -1,5 +1,5 @@
 build
-out
+bin
 svgout
 vendor
 .*.sw*
